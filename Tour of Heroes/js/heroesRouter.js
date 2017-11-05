@@ -1,66 +1,68 @@
 var express = require('express');
 var router = express.Router();
-
-var heroes = [
-	{id:0, name:"dani"},
-	{id:1, name:"yosi"},
-	{id:2, name:"moshe"},
-	{id:3, name:"lary"},
-	{id:4, name:"eli"},
-	{id:5, name:"menachem"}
-];
-
-
+var heroes = require("./heroes_db");
 
 router.get("/",function (req,res) {
 	res.send(heroes);
 });
 router.get("/:id",function (req,res) {
-	res.send(heroes.find((hero) => hero.id == req.param("id") ));
+	res.send(findUserById(req.param("id"),heroes));
 });
 router.put("/:id",function (req,res) {
-	var heroById = heroes.find((hero) => hero.id == req.param("id"));
-	heroById.name = req.query.name;
+	updateUserById(req.param("id"),heroes,req.query.name);
 	res.send(heroes);
 });
-
-
 router.post("/" ,function (req,res) {
-	var idExistAlready = heroes.find((hero) => hero.id == req.body.id);
+	res.send(addNewUser(req.body.id,heroes,req.body));
+});
+
+router.delete("/:id",function(req,res){
+	res.send(deleteUser(req.param("id"),heroes));
+});
+router.delete("/",function(req,res){
+	res.send(deleteUserByTerm(req.query.name,heroes));
+});
+
+var findUserById = function (id,heroes) {
+	return heroes.find((hero) => hero.id == id )
+}
+var updateUserById = function (id,heroes,name){
+	var heroById = findUserById(req.param("id"),heroes);
+	heroById.name = name;
+	return heroes;
+}
+var addNewUser = function (id,heroes,json) {
+	var idExistAlready = findUserById(id,heroes);
 	var value;
-	if(idExistAlready == undefined){
-		heroes.push(req.body);
+	if(idExistAlready === undefined){
+		heroes.push(json);
 		value = heroes;
 	}else{
 		value = "id already exist please choose a diffrent id.";
 	}
-	res.send(value);
-});
-
-router.delete("/:id",function(req,res){
-	var heroToDelete = heroes.find((hero) => hero.id == req.param("id"));
+	return value;
+}
+var deleteUser = function (id,heroes) {
+	var heroToDelete = findUserById(id,heroes);
 	var value;
-	if(heroToDelete == undefined){
-		value = "User id to delete doesnt Exist."
+	if(heroToDelete === undefined){
+		value = "User id to delete does`nt Exist."
 	}else{
 		heroes.splice(heroes.indexOf(heroToDelete), 1);
 		value = "the id : " + heroToDelete.id.toString() + " has been deleted."
 	}
-	res.send(value);
-
-});
-router.delete("/",function(req,res){
-	var heroToDelete = heroes.find((hero) => hero.name == req.query.name);
-	var value;
-	if(heroToDelete == undefined){
-		value = "User name to delete doesnt Exist."
-	}else{
-		heroes.splice(heroes.indexOf(heroToDelete), 1);
-		value = "the name : " + heroToDelete.name + " has been deleted."
+	return value;
+}
+var deleteUserByTerm = function (term,heroes) {
+	var heroesToDelete =[];
+	heroesToDelete.push((heroes.find((hero) => { if(hero.name.indexOf(term) > -1){return hero}})));
+	var value = "";
+	if(heroesToDelete.length ===0){return "there are no users to delete."}
+	for (let hero of heroesToDelete) {
+		heroes.splice(heroes.indexOf(hero), 1);
+		value += "the name : " + hero.name + " has been deleted.`n"
 	}
-	res.send(value);
-
-});
-
+	return value;
+}
 
 module.exports=router;
