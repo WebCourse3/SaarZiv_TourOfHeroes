@@ -41,10 +41,22 @@ router.delete("/:id",function(req,res){
 	var heroToDelete = heroes.find((hero) => hero.id == req.param("id"));
 	var value;
 	if(heroToDelete == undefined){
-		value = "User to delete doesnt Exist."
+		value = "User id to delete doesnt Exist."
 	}else{
 		heroes.splice(heroes.indexOf(heroToDelete), 1);
 		value = "the id : " + heroToDelete.id.toString() + " has been deleted."
+	}
+	res.send(value);
+
+});
+router.delete("/",function(req,res){
+	var heroToDelete = heroes.find((hero) => hero.name == req.query.name);
+	var value;
+	if(heroToDelete == undefined){
+		value = "User name to delete doesnt Exist."
+	}else{
+		heroes.splice(heroes.indexOf(heroToDelete), 1);
+		value = "the name : " + heroToDelete.name + " has been deleted."
 	}
 	res.send(value);
 
