@@ -2,29 +2,29 @@ const express = require('express');
 const router = express.Router();
 let heroes = require("./heroes_db");
 const controller = require("./controller");
-let cont = new controller.cont();
+let ctrl = new controller.ctrl();
 
 
 router.get("/",function (req,res) {
 	res.send(heroes.heroes);
 });
 router.get("/:id",function (req,res) {
-	res.send(cont.findUserById(req.param("id"),heroes.heroes));
+	res.send(ctrl.findUserById(req.param("id"),heroes.heroes));
 });
 router.put("/:id",function (req,res) {
-	cont.updateUserById(req.param("id"),heroes.heroes,req.query.name);
+    ctrl.updateUserById(req.param("id"),heroes.heroes,req.query.name);
 	res.send(heroes.heroes);
 });
 router.post("/" ,function (req,res) {
-	res.send(cont.addNewUser(req.body.id,heroes.heroes,req.body));
+	res.send(ctrl.addNewUser(req.body,heroes.heroes));
 });
 
 router.delete("/:id",function(req,res){
-	res.send(cont.deleteUser(req.param("id"),heroes.heroes));
+	res.send(ctrl.deleteUser(req.param("id"),heroes.heroes));
 });
 router.delete("/",function(req,res){
 
-	res.send(cont.deleteUserByTerm(req.query.name,heroes.heroes));
+	res.send(ctrl.deleteUserByTerm(req.query.name,heroes.heroes));
 });
 
 

@@ -1,15 +1,15 @@
 class Controller {
+
 	findUserById(id, heroes) {
-		//return "shsdfhsdk;fsdjk;hkasd";
 		return heroes.find((hero) => hero.id == id)
 	}
 	updateUserById(id, heroes, name) {
 		var heroById = this.findUserById(id, heroes);
-		//heroById.name = name;
+		heroById.name = name;
 		return heroes;
 	}
-	addNewUser(id, heroes, json) {
-		var idExistAlready = this.findUserById(id, heroes);
+	addNewUser(json,heroes) {
+		var idExistAlready = this.findUserById(json, heroes);
 		var value;
 		if (idExistAlready === undefined) {
 			heroes.push(json);
@@ -44,5 +44,5 @@ class Controller {
 		return value;
 	}
 }
-module.exports.cont = Controller;
+module.exports.ctrl = Controller;
 
