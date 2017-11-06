@@ -1,5 +1,5 @@
+//comment for pull req
 class Controller {
-
 	findUserById(id, heroes) {
 		return heroes.find((hero) => hero.id == id)
 	}
