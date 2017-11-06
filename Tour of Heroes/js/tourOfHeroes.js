@@ -1,7 +1,7 @@
-var express = require('express');
-var app = express();
-var heroesRouter = require("../js/heroesRouter");
-var bodyParser = require('body-parser');
+const express = require('express');
+const app = express();
+const heroesRouter = require("../js/heroesRouter");
+const bodyParser = require('body-parser');
 
 app.use(bodyParser.json());       // to support JSON-encoded bodies
 app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
