@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const heroesRouter = require("../js/heroesRouter");
 const bodyParser = require('body-parser');
-let LoggerFile = require('../ts/Logger');
+let Logger = require('../ts/Logger').Logger;
 let obj ={
 	console: true,
 	file: true,
@@ -36,4 +36,3 @@ app.listen(3000,function() {
 	console.log('Server started on port 3000');
 });
 
-logger.log(level.info,"hii there");

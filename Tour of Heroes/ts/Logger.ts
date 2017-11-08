@@ -24,7 +24,8 @@ export interface configuration {
 export class Logger {
 	name: string = 'a';
 	configurationObj: configuration;
-	//constructor(file:string);
+	//constructor(file:string);Question for reviewer :
+	// what is the meaning of this line of code? (in case it was`nt commented)
 	constructor(file:string,confObj?:configuration) :void{
 		if(!(isUndefined(file) && isUndefined(confObj))){
 			this.implementationConstructor(file,confObj);
@@ -33,8 +34,6 @@ export class Logger {
 			this.implementationConstructor(file);
 		}
 	}
-	/*implementationConstructor(filePath:string):void;
-	implementationConstructor(name:string,confObj:configuration):void;*/
 
 	implementationConstructor(filePath: string, confObj?: configuration) :void {
 		if(isUndefined(confObj)){
@@ -47,7 +46,6 @@ export class Logger {
 	}
 
 	public log(level: Level, ...logs: string[]): void {
-		// calls function according to level.
 		let x = {
 			'info': Color.green,
 			'debug': Color.yellow,
@@ -98,8 +96,6 @@ export class Logger {
 	public debug(...logs:string[]){
 		this.writeLog(Color.yellow, Level.debug, logs);]
 	}
-
-
 
 }
 
