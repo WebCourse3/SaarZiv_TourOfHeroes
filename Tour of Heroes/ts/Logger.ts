@@ -1,10 +1,17 @@
 import * as fs from "fs";
+import { isUndefined } from 'util';
 
 export enum Level {
 	info = 'info',
 	debug = 'debug',
 	warning = 'warning',
 	error = 'error'
+}
+enum Color {
+	red = '\x1b[31m%s\x1b[0m',
+	green = "\x1b[32m%s\x1b[0m",
+	yellow = "\x1b[33m%s\x1b[0m"
+
 }
 
 export interface configuration {
@@ -17,79 +24,79 @@ export interface configuration {
 export class Logger {
 	name: string = 'a';
 	configurationObj: configuration;
-
-	constructor(Name: string, confObj: configuration) {
-		this.configurationObj = confObj;
-		if(this,confObj.file){
-			this.createNewLogFile();
+	//constructor(file:string);
+	constructor(file:string,confObj?:configuration) :void{
+		if(!(isUndefined(file) && isUndefined(confObj))){
+			this.implementationConstructor(file,confObj);
 		}
-		this.name = Name;
+		else if(!(isUndefined(file))) {
+			this.implementationConstructor(file);
+		}
+	}
+	/*implementationConstructor(filePath:string):void;
+	implementationConstructor(name:string,confObj:configuration):void;*/
+
+	implementationConstructor(filePath: string, confObj?: configuration) :void {
+		if(isUndefined(confObj)){
+			this.readConfFile(filePath);
+		}
+		else{
+			this.name = filePath;
+			this.configurationObj = confObj;
+		}
 	}
 
-	log(level: Level, logs: string): void {
+	public log(level: Level, ...logs: string[]): void {
 		// calls function according to level.
 		let x = {
-			'info': this.info.bind(this),
-			'debug': this.debug.bind(this),
-			'warning': this.warning.bind(this),
-			'error': this.error.bind(this)
+			'info': Color.green,
+			'debug': Color.yellow,
+			'warning': Color.yellow,
+			'error': Color.red
 		};
-		x[level](logs);
+		this.writeLog(x[level],level,logs);
 	}
-
-	info(logs: string): any {
-		if(this.configurationObj.console) {
-			if (this.configurationObj.console) {
-				if (this.configurationObj.colors) {
-					console.log(`\x1b[32m%s\x1b[0m`, logs);
-				}
-				else {
-					console.log(logs);
-				}
-			}
-		}
-	}
-
-	warning(logs: string): void {
-		if(this.configurationObj.console) {
+	private  writeLog(color : Color ,level:Level ,logs :string[]){
+		if (this.configurationObj.console) {
 			if (this.configurationObj.colors) {
-				console.log(`\x1b[33m%s\x1b[0m`, logs);
+				logs.forEach((log) => console.log(color,log))
 			}
 			else {
-				console.log(logs);
+				logs.forEach((log) => console.log(log));
 			}
 		}
+		if(this.configurationObj.file){
+			logs.forEach((log) => this.writeToLogFile(level+":"+log+"\n"))
+		}
 	}
+	public readConfFile(path:string){
+		if(fs.existsSync(path)) {
+			let fileContent = fs.readFileSync(path, "utf8");
+			let jsonConfObj = JSON.parse(fileContent);
+			this.implementationConstructor(path, jsonConfObj);
+		}
+		else{
+			throw new SyntaxError("the file does`nt exists.")
+		}
 
-	debug(logs: string): void {
-		if(this.configurationObj.console) {
-			if (this.configurationObj.colors) {
-				console.log(`\x1b[33m%s\x1b[0m`, logs);
-			}
-			else {
-				console.log(logs);
-			}
-		}
 	}
-
-	error(logs: string): void {
-		if(this.configurationObj.console) {
-			if (this.configurationObj.colors) {
-				console.log(`\x1b[31m%s\x1b[0m`, logs);
-			}
-			else {
-				console.log(logs);
-			}
-		}
-	}
-	createNewLogFile():void{
+	public recreateLogFile():void{
 		fs.openSync("C:\\Users\\Jbt\\WebstormProjects\\Tour of Heroes\\log.txt",'w');
 	}
-	writeToLogFile(log:string) :void{
-		fs.appendFile("C:\\Users\\Jbt\\WebstormProjects\\Tour of Heroes\\log.txt",log, (err) =>{
-			if(err){throw err;}
-			console.log("added")}
-		)
+	private writeToLogFile(log:string) :void{
+		fs.appendFileSync("C:\\Users\\Jbt\\WebstormProjects\\Tour of Heroes\\log.txt",log);
+	}
+	public error(...logs:string[]){
+		this.writeLog(Color.red, Level.error, logs);
+	}
+	public warning(...logs:string[]){
+		this.writeLog(Color.yellow, Level.warning, logs);
+	}
+	public info(...logs:string[]){
+		this.writeLog(Color.green, Level.info, logs);
+	}
+	public debug(...logs:string[]){
+		this.writeLog(Color.yellow, Level.debug, logs);]
 	}
 
 

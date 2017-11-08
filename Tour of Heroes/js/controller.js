@@ -1,11 +1,11 @@
 class Controller {
 	findUserById(id, heroes) {
-		//return "shsdfhsdk;fsdjk;hkasd";
 		return heroes.find((hero) => hero.id == id)
 	}
 	updateUserById(id, heroes, name) {
 		var heroById = this.findUserById(id, heroes);
-		//heroById.name = name;
+		heroById.name = name;
+
 		return heroes;
 	}
 	addNewUser(id, heroes, json) {
